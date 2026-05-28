@@ -1042,7 +1042,6 @@ window.setBudgetStatus=async function(id,status){
   await updateDoc(doc(db,'budgets',id),{status});
   toast({accepted:'Presupuesto aceptado ✓',rejected:'Presupuesto rechazado'}[status]);
 };
-to?')) return;
   await deleteDoc(doc(db,'budgets',id)); toast('Presupuesto eliminado');
 };
 window.openNewBudget=function(){
