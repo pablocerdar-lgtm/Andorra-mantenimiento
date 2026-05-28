@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -234,6 +235,7 @@ tr:hover .row-actions{opacity:1}
   <div class="sidebar-bottom">
     <button class="btn-alert" onclick="sendAlert()">🔔 Enviar aviso</button>
     <button class="btn-settings" onclick="openSettings()">⚙ Configuración</button>
+    <button class="btn-settings" onclick="downloadHTML()" style="margin-top:6px">⬇ Descargar HTML</button>
   </div>
 </aside>
 
@@ -1120,6 +1122,16 @@ window.toast=function(msg,type='ok'){
   el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2800);
 };
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+window.downloadHTML=function(){
+  const src = document.documentElement.outerHTML;
+  const blob = new Blob([src], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'andorra-mantenimiento.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
 
 async function boot(){
   try{
