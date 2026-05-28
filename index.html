@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andorra Mantenimiento CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1C1917;--ink2:#57534E;--ink3:#A8A29E;
+  --paper:#FAFAF8;--paper2:#F5F0E8;--paper3:#EDE8DC;--border:#E7E2D8;
+  --gold:#B45309;--gold-bg:#FEF3C7;
+  --navy:#1E3A5F;--navy-mid:#2B5080;--navy-bg:#EFF4FB;--navy-light:#F5F8FD;
+  --green:#166534;--green-bg:#DCFCE7;
+  --red:#991B1B;--red-bg:#FEE2E2;
+  --amber:#92400E;--amber-bg:#FEF3C7;
+  --r:8px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow:0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:0 12px 40px rgba(0,0,0,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:var(--paper2);color:var(--ink);min-height:100vh;font-size:15px}
+
+.sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--navy);display:flex;flex-direction:column;z-index:50;box-shadow:4px 0 24px rgba(0,0,0,.15)}
+.sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
+.sidebar-logo h1{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;letter-spacing:.01em;line-height:1.3}
+.sidebar-logo p{font-size:.72rem;color:rgba(255,255,255,.45);margin-top:4px;font-weight:300}
+.sync-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#4ade80;margin-right:5px;vertical-align:middle;box-shadow:0 0 6px #4ade80}
+.sync-dot.off{background:#f87171;box-shadow:0 0 6px #f87171}
+.sync-dot.loading{background:#fbbf24;box-shadow:0 0 6px #fbbf24;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.nav-section{padding:16px 12px 4px;font-size:.65rem;font-weight:600;letter-spacing:.12em;color:rgba(255,255,255,.3);text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 16px;margin:2px 8px;border-radius:7px;cursor:pointer;color:rgba(255,255,255,.65);font-size:.88rem;font-weight:400;transition:all .18s;border:none;background:none;width:calc(100% - 16px);text-align:left;font-family:'Outfit',sans-serif}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-item.active{background:rgba(255,255,255,.15);color:#fff;font-weight:600}
+.nav-item .icon{font-size:1rem;width:20px;text-align:center;flex-shrink:0}
+.nav-item .badge{margin-left:auto;background:var(--gold);color:#fff;font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:10px;min-width:20px;text-align:center}
+.nav-item .badge.red{background:var(--red)}
+.sidebar-bottom{margin-top:auto;padding:16px 12px;border-top:1px solid rgba(255,255,255,.1)}
+.btn-alert{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;border-radius:7px;background:rgba(180,83,9,.2);border:1px solid rgba(180,83,9,.4);color:#FCD34D;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .18s;font-family:'Outfit',sans-serif}
+.btn-alert:hover{background:rgba(180,83,9,.35)}
+.btn-settings{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;border-radius:7px;margin-top:6px;background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .18s;font-family:'Outfit',sans-serif}
+.btn-settings:hover{background:rgba(255,255,255,.08);color:#fff}
+
+.main{margin-left:240px;min-height:100vh;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:40;background:rgba(250,250,248,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between}
+.page-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--ink);font-weight:600}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.btn-primary{padding:8px 18px;background:var(--navy-mid);color:#fff;border:none;border-radius:7px;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:6px}
+.btn-primary:hover{background:var(--navy);transform:translateY(-1px);box-shadow:0 4px 12px rgba(30,58,95,.25)}
+.btn-secondary{padding:8px 16px;background:transparent;color:var(--ink2);border:1px solid var(--border);border-radius:7px;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:500;cursor:pointer;transition:all .18s}
+.btn-secondary:hover{background:var(--paper3);border-color:var(--ink3)}
+
+.alerts-banner{display:none;background:var(--amber-bg);border-bottom:1px solid #D97706;padding:9px 28px;gap:10px;align-items:center;flex-wrap:wrap}
+.alerts-banner.show{display:flex}
+.alert-chip{background:#fff;border:1px solid #FBB534;color:var(--amber);font-size:.73rem;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.alert-chip.red{border-color:#FCA5A5;color:var(--red)}
+.alert-text{font-size:.82rem;color:var(--amber);font-weight:600}
+.btn-send-alert{margin-left:auto;padding:5px 14px;background:var(--gold);color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif}
+
+.page{display:none;padding:24px 28px;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.kpi{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:6px}
+.kpi-label{font-size:.7rem;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em}
+.kpi-val{font-size:2rem;font-weight:700;line-height:1;color:var(--ink)}
+.kpi-val.green{color:var(--green)}.kpi-val.red{color:var(--red)}.kpi-val.gold{color:var(--gold)}
+.kpi-sub{font-size:.73rem;color:var(--ink3)}
+
+.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.search-wrap{position:relative;flex:1;min-width:180px}
+.search-wrap input{width:100%;padding:8px 12px 8px 34px;border:1px solid var(--border);border-radius:7px;background:var(--paper);font-family:'Outfit',sans-serif;font-size:.85rem;color:var(--ink);outline:none;transition:border-color .15s}
+.search-wrap input:focus{border-color:var(--navy-mid)}
+.search-ico{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink3);pointer-events:none;font-size:.9rem}
+.chip{padding:7px 14px;border:1px solid var(--border);border-radius:20px;background:var(--paper);font-size:.78rem;font-weight:500;color:var(--ink2);cursor:pointer;transition:all .15s;font-family:'Outfit',sans-serif}
+.chip:hover,.chip.on{background:var(--navy-mid);color:#fff;border-color:var(--navy-mid)}
+.chip.warn.on{background:var(--gold);border-color:var(--gold)}
+.chip.danger.on{background:var(--red);border-color:var(--red)}
+.chip.done.on{background:var(--green);border-color:var(--green)}
+.sel-zona{padding:8px 12px;border:1px solid var(--border);border-radius:7px;background:var(--paper);font-family:'Outfit',sans-serif;font-size:.83rem;color:var(--ink2);outline:none;cursor:pointer}
+
+.table-wrap{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:14px}
+.section-row{display:flex;align-items:center;gap:8px;padding:9px 16px;background:var(--paper2);border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.section-row:hover{background:var(--paper3)}
+.s-badge{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:10px;background:var(--navy-mid);color:#fff;font-family:'Outfit',sans-serif}
+.s-count{font-size:.73rem;color:var(--ink3);font-family:'Outfit',sans-serif;margin-left:4px}
+.s-arrow{margin-left:auto;font-size:.8rem;color:var(--ink3);transition:transform .2s}
+.section-row.collapsed .s-arrow{transform:rotate(-90deg)}
+.section-body.hidden{display:none}
+table.crm{width:100%;border-collapse:collapse}
+table.crm th{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);padding:9px 14px;background:var(--paper2);text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+table.crm td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:.85rem;color:var(--ink)}
+table.crm tr:last-child td{border-bottom:none}
+table.crm tbody tr:hover td{background:var(--navy-light)}
+table.crm .comment-row td{background:var(--paper2);padding:6px 14px 10px 14px;border-bottom:1px solid var(--border)}
+table.crm .comment-row:hover td{background:var(--paper2)}
+
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:.73rem;font-weight:600;white-space:nowrap}
+.pill-ok{background:var(--green-bg);color:var(--green)}
+.pill-warn{background:var(--amber-bg);color:var(--amber)}
+.pill-danger{background:var(--red-bg);color:var(--red)}
+.pill-none{background:var(--paper3);color:var(--ink3)}
+.pill-done{background:#DCFCE7;color:#166534}
+
+.status-sel{border:none;background:transparent;font-family:'Outfit',sans-serif;font-size:.73rem;font-weight:600;cursor:pointer;outline:none;padding:3px 8px;border-radius:20px}
+.status-sel.done{background:var(--green-bg);color:var(--green)}
+.status-sel.pending{background:#EFF6FF;color:#1D4ED8}
+.status-sel.progress{background:var(--amber-bg);color:var(--amber)}
+
+.row-actions{display:flex;gap:4px;opacity:0;transition:opacity .15s}
+tr:hover .row-actions{opacity:1}
+.act-btn{padding:4px 9px;border-radius:5px;border:1px solid var(--border);background:transparent;font-size:.73rem;color:var(--ink2);cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s}
+.act-btn:hover{background:var(--navy-bg);color:var(--navy-mid);border-color:var(--navy-mid)}
+.act-btn.del:hover{background:var(--red-bg);color:var(--red);border-color:#FCA5A5}
+
+/* inline comment */
+.comment-area{width:100%;border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--ink);background:var(--paper);resize:none;outline:none;min-height:52px;transition:border-color .15s}
+.comment-area:focus{border-color:var(--navy-mid);background:#fff}
+.comment-save-btn{margin-top:5px;padding:5px 14px;background:var(--navy-mid);color:#fff;border:none;border-radius:5px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif}
+.comment-toggle{font-size:.72rem;color:var(--navy-mid);cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif;padding:2px 0;font-weight:500;white-space:nowrap}
+.comment-toggle:hover{text-decoration:underline}
+.existing-comment{font-size:.78rem;color:var(--ink2);font-style:italic;line-height:1.4;padding:4px 0}
+
+.form-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:28px;box-shadow:var(--shadow-sm);max-width:760px}
+.form-title{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:20px;color:var(--ink)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg.full{grid-column:1/-1}
+.fg label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3)}
+.fg input,.fg select,.fg textarea{padding:10px 13px;border:1px solid var(--border);border-radius:7px;font-family:'Outfit',sans-serif;font-size:.88rem;color:var(--ink);background:var(--paper2);outline:none;transition:all .15s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--navy-mid);background:#fff;box-shadow:0 0 0 3px rgba(43,80,128,.08)}
+.fg textarea{resize:vertical;min-height:80px}
+.form-actions{display:flex;gap:10px;margin-top:20px}
+
+.cost-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.cost-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm)}
+.cost-card.total-card{border-color:var(--navy-mid);background:var(--navy-bg)}
+.cost-card-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:8px}
+.cost-card.total-card .cost-card-label{color:var(--navy-mid)}
+.cost-card-val{font-size:1.6rem;font-weight:700;color:var(--ink)}
+.cost-card-val.gold{color:var(--gold)}
+.cost-card-val.navy{color:var(--navy-mid)}
+.cost-card-sub{font-size:.75rem;color:var(--ink3);margin-top:4px}
+.zone-cost-row{display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid var(--border);font-size:.85rem}
+.zone-cost-row:last-child{border-bottom:none}
+.zone-name{flex:1;font-weight:500}
+.zone-bar-wrap{flex:2;height:8px;background:var(--paper3);border-radius:4px;overflow:hidden}
+.zone-bar{height:100%;border-radius:4px;background:var(--navy-mid);transition:width .4s ease}
+.zone-val{width:90px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink2);font-weight:600}
+.cost-total-row{background:var(--navy-bg);font-weight:700;border-top:2px solid var(--navy-mid) !important}
+.cost-total-row td{color:var(--navy-mid) !important;font-size:.88rem}
+
+.file-btn{padding:4px 10px;border:1px dashed var(--border);border-radius:5px;background:transparent;font-size:.73rem;color:var(--navy-mid);cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;white-space:nowrap}
+.file-btn:hover{background:var(--navy-bg);border-style:solid}
+.file-link{color:var(--navy-mid);font-size:.78rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--navy-bg);border-radius:5px;border:1px solid #C7D9F0}
+.file-link:hover{background:#dbeafe}
+
+.budget-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.budget-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm);transition:all .2s;display:flex;flex-direction:column;gap:12px}
+.budget-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.bc-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.bc-desc{font-weight:600;font-size:.92rem;line-height:1.3;flex:1}
+.bc-zone{font-size:.72rem;color:var(--ink3);margin-top:3px}
+.bc-amount{font-size:1.3rem;font-weight:700;color:var(--navy);white-space:nowrap}
+.bc-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:.75rem;color:var(--ink3)}
+.budget-status{font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:20px;display:inline-block}
+.bs-pending{background:#EFF6FF;color:#1D4ED8}
+.bs-accepted{background:var(--green-bg);color:var(--green)}
+.bs-rejected{background:var(--red-bg);color:var(--red)}
+.add-budget-btn{border:2px dashed var(--border);background:transparent;border-radius:var(--r);padding:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink3);font-family:'Outfit',sans-serif;font-size:.85rem;transition:all .2s}
+.add-budget-btn:hover{border-color:var(--navy-mid);color:var(--navy-mid);background:var(--navy-bg)}
+.budget-file-area{border:1px dashed var(--border);border-radius:6px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .15s}
+.budget-file-area:hover{border-color:var(--navy-mid);background:var(--navy-bg)}
+.budget-file-area .file-ico{font-size:1.4rem}
+.budget-file-area .file-txt{font-size:.8rem;color:var(--ink2)}
+.budget-file-area .file-txt small{display:block;color:var(--ink3);font-size:.72rem;margin-top:2px}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.modal{background:var(--paper);border-radius:12px;width:100%;max-width:580px;box-shadow:var(--shadow-lg);overflow:hidden;animation:modalIn .2s ease;max-height:90vh;display:flex;flex-direction:column}
+@keyframes modalIn{from{transform:scale(.96) translateY(10px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.modal-hd{background:var(--navy);color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.modal-hd h2{font-family:'Playfair Display',serif;font-size:1.1rem}
+.modal-x{background:none;border:none;color:rgba(255,255,255,.7);font-size:1.3rem;cursor:pointer}
+.modal-x:hover{color:#fff}
+.modal-bd{padding:24px;overflow-y:auto}
+.modal-ft{padding:16px 24px;background:var(--paper2);border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0}
+
+.loading-screen{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px;transition:opacity .5s}
+.loading-screen.hidden{opacity:0;pointer-events:none}
+.loading-logo{font-family:'Playfair Display',serif;font-size:2rem;color:#fff}
+.loading-sub{font-size:.85rem;color:rgba(255,255,255,.5)}
+.spinner{width:32px;height:32px;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--ink);color:#fff;padding:12px 20px;border-radius:8px;font-size:.85rem;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;transition:opacity .3s;pointer-events:none;max-width:300px}
+#toast.show{opacity:1}
+.empty{text-align:center;padding:48px 20px;color:var(--ink3)}
+.empty .ico{font-size:2rem;margin-bottom:8px}
+.section-hd-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px 8px;border-bottom:1px solid var(--border)}
+.section-hd-bar span{font-family:'Playfair Display',serif;font-size:.95rem}
+</style>
+</head>
+<body>
+
+<div class="loading-screen" id="loading">
+  <div class="loading-logo">Andorra Mantenimiento</div>
+  <div class="spinner"></div>
+  <div class="loading-sub" id="loading-msg">Conectando con Firebase...</div>
+</div>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h1>Andorra<br>Mantenimiento</h1>
+    <p><span class="sync-dot loading" id="sync-dot"></span><span id="sync-label">Conectando...</span></p>
+  </div>
+  <div class="nav-section">Gestión</div>
+  <button class="nav-item active" data-page="tareas" onclick="nav(this,'tareas')">
+    <span class="icon">📋</span> Todas las tareas
+    <span class="badge red" id="nb-danger" style="display:none">0</span>
+  </button>
+  <button class="nav-item" data-page="nueva" onclick="nav(this,'nueva')">
+    <span class="icon">➕</span> Añadir tarea
+  </button>
+  <button class="nav-item" data-page="costes" onclick="nav(this,'costes')">
+    <span class="icon">💰</span> Control de costes
+  </button>
+  <button class="nav-item" data-page="presupuestos" onclick="nav(this,'presupuestos')">
+    <span class="icon">📄</span> Presupuestos
+    <span class="badge" id="nb-budget" style="display:none">0</span>
+  </button>
+  <div class="sidebar-bottom">
+    <button class="btn-alert" onclick="sendAlert()">🔔 Enviar aviso</button>
+    <button class="btn-settings" onclick="openSettings()">⚙ Configuración</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <span class="page-title" id="page-title">Todas las tareas</span>
+    <div class="topbar-actions">
+      <button class="btn-secondary" onclick="nav(document.querySelector('[data-page=nueva]'),'nueva')">+ Nueva tarea</button>
+    </div>
+  </div>
+
+  <div class="alerts-banner" id="alerts-banner">
+    <span class="alert-text" id="alert-text">⚠ Tareas urgentes:</span>
+    <div id="alert-chips"></div>
+    <button class="btn-send-alert" onclick="sendAlert()">📤 Enviar aviso</button>
+  </div>
+
+  <!-- TAREAS -->
+  <div class="page active" id="page-tareas">
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-label">Total tareas</div><div class="kpi-val" id="k-total">—</div></div>
+      <div class="kpi"><div class="kpi-label">Completadas</div><div class="kpi-val green" id="k-done">—</div></div>
+      <div class="kpi"><div class="kpi-label">Vencen pronto</div><div class="kpi-val gold" id="k-warn">—</div></div>
+      <div class="kpi"><div class="kpi-label">Vencidas</div><div class="kpi-val red" id="k-danger">—</div></div>
+    </div>
+    <div class="filter-bar">
+      <div class="search-wrap"><span class="search-ico">🔍</span><input type="text" id="q-tasks" placeholder="Buscar tarea, zona, empresa..." oninput="renderTasks()"></div>
+      <button class="chip on" id="cf-all" onclick="setTF('all')">Todas</button>
+      <button class="chip warn" id="cf-warn" onclick="setTF('warn')">⚠ Pronto</button>
+      <button class="chip danger" id="cf-danger" onclick="setTF('danger')">🔴 Vencidas</button>
+      <button class="chip done" id="cf-done" onclick="setTF('done')">✓ Hechas</button>
+      <select class="sel-zona" id="zona-filter" onchange="renderTasks()">
+        <option value="">Todas las zonas</option>
+        <option>Zona Comunitaria</option>
+        <option>2º 1ª</option><option>2º 2ª</option><option>3º 1ª</option><option>3º 2ª</option>
+        <option>4º 1ª</option><option>4º 2ª</option><option>5º 1ª</option><option>5º 2ª</option>
+        <option>Ático</option>
+      </select>
+    </div>
+    <div id="tasks-container"></div>
+  </div>
+
+  <!-- NUEVA TAREA -->
+  <div class="page" id="page-nueva">
+    <div class="form-card">
+      <div class="form-title">Nueva tarea de mantenimiento</div>
+      <div class="form-grid">
+        <div class="fg full"><label>Descripción *</label><input type="text" id="nf-desc" placeholder="Ej: Revisión caldera individual"></div>
+        <div class="fg"><label>Zona / Piso *</label>
+          <select id="nf-zona"><option>Zona Comunitaria</option><option>2º 1ª</option><option>2º 2ª</option><option>3º 1ª</option><option>3º 2ª</option><option>4º 1ª</option><option>4º 2ª</option><option>5º 1ª</option><option>5º 2ª</option><option>Ático</option></select>
+        </div>
+        <div class="fg"><label>Empresa / Técnico</label><input type="text" id="nf-empresa" placeholder="Nombre empresa o técnico"></div>
+        <div class="fg"><label>Última revisión</label><input type="date" id="nf-ultima"></div>
+        <div class="fg"><label>Próxima revisión</label><input type="date" id="nf-proxima"></div>
+        <div class="fg"><label>Coste (€)</label><input type="number" id="nf-coste" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="fg"><label>Periodicidad</label>
+          <select id="nf-periodo"><option value="">Sin periodicidad</option><option value="1">Mensual</option><option value="3">Trimestral</option><option value="6">Semestral</option><option value="12">Anual</option><option value="24">Bianual</option></select>
+        </div>
+        <div class="fg"><label>Estado</label>
+          <select id="nf-status"><option value="pending">Pendiente</option><option value="progress">En curso</option><option value="done">Completada</option></select>
+        </div>
+        <div class="fg full"><label>Notas / Comentarios</label><textarea id="nf-notes" placeholder="Observaciones, detalles, referencias..."></textarea></div>
+        <div class="fg"><label>¿Tiene presupuesto?</label>
+          <select id="nf-has-budget" onchange="toggleBudgetFields('nf')"><option value="no">No</option><option value="yes">Sí</option></select>
+        </div>
+        <div class="fg" id="nf-ba-wrap" style="display:none"><label>Importe presupuesto (€)</label><input type="number" id="nf-budget-amount" min="0" step="0.01"></div>
+        <div class="fg full" id="nf-be-wrap" style="display:none"><label>Empresa presupuesto</label><input type="text" id="nf-budget-empresa"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" onclick="addTask()">✓ Guardar tarea</button>
+        <button class="btn-secondary" onclick="clearForm()">Limpiar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COSTES -->
+  <div class="page" id="page-costes">
+    <div class="cost-summary">
+      <div class="cost-card total-card">
+        <div class="cost-card-label">💰 Coste total</div>
+        <div class="cost-card-val navy" id="cc-total">—</div>
+        <div class="cost-card-sub">Todas las entradas</div>
+      </div>
+      <div class="cost-card"><div class="cost-card-label">Pagado / Realizado</div><div class="cost-card-val green" id="cc-done">—</div><div class="cost-card-sub">Gasto efectivo</div></div>
+      <div class="cost-card"><div class="cost-card-label">Pendiente de pago</div><div class="cost-card-val gold" id="cc-pending">—</div><div class="cost-card-sub">Gasto previsto</div></div>
+      <div class="cost-card"><div class="cost-card-label">Nº de entradas</div><div class="cost-card-val" id="cc-count">—</div><div class="cost-card-sub">Con importe registrado</div></div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="search-wrap"><span class="search-ico">🔍</span><input type="text" id="q-costes" placeholder="Buscar concepto, zona, empresa..." oninput="renderCostes()"></div>
+      <select class="sel-zona" id="zona-filter-cost" onchange="renderCostes()">
+        <option value="">Todas las zonas</option>
+        <option>Zona Comunitaria</option>
+        <option>2º 1ª</option><option>2º 2ª</option><option>3º 1ª</option><option>3º 2ª</option>
+        <option>4º 1ª</option><option>4º 2ª</option><option>5º 1ª</option><option>5º 2ª</option>
+        <option>Ático</option>
+      </select>
+    </div>
+
+    <div class="table-wrap" style="margin-bottom:20px">
+      <div class="section-hd-bar"><span>Coste por zona</span></div>
+      <div id="cost-by-zone" style="padding:8px 0"></div>
+    </div>
+    <div class="table-wrap">
+      <div class="section-hd-bar">
+        <span>Detalle de costes</span>
+        <button class="btn-primary" style="font-size:.75rem;padding:6px 14px" onclick="openAddCostEntry()">+ Añadir entrada</button>
+      </div>
+      <table class="crm">
+        <thead><tr>
+          <th>Concepto</th><th>Zona</th><th>Empresa</th><th>Fecha</th>
+          <th>Importe</th><th>Estado</th><th>Archivo</th><th></th>
+        </tr></thead>
+        <tbody id="cost-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PRESUPUESTOS -->
+  <div class="page" id="page-presupuestos">
+    <div class="kpi-row" style="grid-template-columns:repeat(3,1fr)">
+      <div class="kpi"><div class="kpi-label">Total presupuestos</div><div class="kpi-val" id="bp-total">—</div></div>
+      <div class="kpi"><div class="kpi-label">Aceptados</div><div class="kpi-val green" id="bp-accepted">—</div></div>
+      <div class="kpi"><div class="kpi-label">Pendientes</div><div class="kpi-val gold" id="bp-pending">—</div></div>
+    </div>
+    <div class="filter-bar" style="margin-bottom:20px">
+      <div class="search-wrap"><span class="search-ico">🔍</span><input type="text" id="q-presupuestos" placeholder="Buscar presupuesto, empresa, zona..." oninput="renderPresupuestos()"></div>
+      <button class="chip on" id="bf-all" onclick="setBF('all')">Todos</button>
+      <button class="chip" id="bf-pending" onclick="setBF('pending')" style="">⏳ Pendientes</button>
+      <button class="chip done" id="bf-accepted" onclick="setBF('accepted')">✓ Aceptados</button>
+      <button class="chip danger" id="bf-rejected" onclick="setBF('rejected')">✕ Rechazados</button>
+    </div>
+    <div class="budget-grid" id="budget-grid"></div>
+  </div>
+</main>
+
+<!-- MODAL EDIT TASK -->
+<div class="overlay" id="modal-edit">
+  <div class="modal">
+    <div class="modal-hd"><h2>Editar tarea</h2><button class="modal-x" onclick="closeModal('modal-edit')">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-grid">
+        <div class="fg full"><label>Descripción *</label><input type="text" id="ef-desc"></div>
+        <div class="fg"><label>Zona / Piso</label>
+          <select id="ef-zona"><option>Zona Comunitaria</option><option>2º 1ª</option><option>2º 2ª</option><option>3º 1ª</option><option>3º 2ª</option><option>4º 1ª</option><option>4º 2ª</option><option>5º 1ª</option><option>5º 2ª</option><option>Ático</option></select>
+        </div>
+        <div class="fg"><label>Empresa / Técnico</label><input type="text" id="ef-empresa"></div>
+        <div class="fg"><label>Última revisión</label><input type="date" id="ef-ultima"></div>
+        <div class="fg"><label>Próxima revisión</label><input type="date" id="ef-proxima"></div>
+        <div class="fg"><label>Coste (€)</label><input type="number" id="ef-coste" min="0" step="0.01"></div>
+        <div class="fg"><label>Periodicidad</label>
+          <select id="ef-periodo"><option value="">Sin periodicidad</option><option value="1">Mensual</option><option value="3">Trimestral</option><option value="6">Semestral</option><option value="12">Anual</option><option value="24">Bianual</option></select>
+        </div>
+        <div class="fg"><label>Estado</label>
+          <select id="ef-status"><option value="pending">Pendiente</option><option value="progress">En curso</option><option value="done">Completada</option></select>
+        </div>
+        <div class="fg full"><label>Notas / Comentarios</label><textarea id="ef-notes"></textarea></div>
+        <div class="fg"><label>¿Tiene presupuesto?</label>
+          <select id="ef-has-budget" onchange="toggleBudgetFields('ef')"><option value="no">No</option><option value="yes">Sí</option></select>
+        </div>
+        <div class="fg" id="ef-ba-wrap" style="display:none"><label>Importe presupuesto (€)</label><input type="number" id="ef-budget-amount" min="0" step="0.01"></div>
+        <div class="fg" id="ef-be-wrap" style="display:none"><label>Empresa presupuesto</label><input type="text" id="ef-budget-empresa"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn-secondary" onclick="closeModal('modal-edit')">Cancelar</button>
+      <button class="btn-primary" onclick="saveEdit()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL COST ENTRY -->
+<div class="overlay" id="modal-cost">
+  <div class="modal">
+    <div class="modal-hd"><h2 id="cost-modal-title">Nueva entrada de coste</h2><button class="modal-x" onclick="closeModal('modal-cost')">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-grid">
+        <div class="fg full"><label>Concepto *</label><input type="text" id="cm-desc" placeholder="Descripción del gasto"></div>
+        <div class="fg"><label>Zona / Piso</label>
+          <select id="cm-zona"><option>Zona Comunitaria</option><option>2º 1ª</option><option>2º 2ª</option><option>3º 1ª</option><option>3º 2ª</option><option>4º 1ª</option><option>4º 2ª</option><option>5º 1ª</option><option>5º 2ª</option><option>Ático</option></select>
+        </div>
+        <div class="fg"><label>Empresa</label><input type="text" id="cm-empresa" placeholder="Empresa o técnico"></div>
+        <div class="fg"><label>Fecha</label><input type="date" id="cm-date"></div>
+        <div class="fg"><label>Importe (€) *</label><input type="number" id="cm-amount" min="0" step="0.01"></div>
+        <div class="fg"><label>Estado</label>
+          <select id="cm-status"><option value="pending">Pendiente</option><option value="done">Pagado</option></select>
+        </div>
+        <div class="fg full"><label>Notas / Comentarios</label><textarea id="cm-notes" placeholder="Observaciones adicionales..."></textarea></div>
+        <div class="fg full"><label>Adjuntar archivo (PDF / imagen, máx. 1.5 MB)</label>
+          <input type="file" id="cm-file" accept=".pdf,.jpg,.jpeg,.png" style="padding:8px;background:var(--paper2);border:1px solid var(--border);border-radius:7px">
+          <div id="cm-file-current" style="font-size:.73rem;color:var(--ink3);margin-top:3px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn-secondary" onclick="closeModal('modal-cost')">Cancelar</button>
+      <button class="btn-primary" id="cost-save-btn" onclick="saveCostEntry()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL BUDGET -->
+<div class="overlay" id="modal-budget">
+  <div class="modal">
+    <div class="modal-hd"><h2 id="bm-title">Nuevo presupuesto</h2><button class="modal-x" onclick="closeModal('modal-budget')">✕</button></div>
+    <div class="modal-bd">
+      <div class="form-grid">
+        <div class="fg full"><label>Descripción *</label><input type="text" id="bm-desc"></div>
+        <div class="fg"><label>Zona / Piso</label>
+          <select id="bm-zona"><option>Zona Comunitaria</option><option>2º 1ª</option><option>2º 2ª</option><option>3º 1ª</option><option>3º 2ª</option><option>4º 1ª</option><option>4º 2ª</option><option>5º 1ª</option><option>5º 2ª</option><option>Ático</option></select>
+        </div>
+        <div class="fg"><label>Empresa</label><input type="text" id="bm-empresa"></div>
+        <div class="fg"><label>Importe (€) *</label><input type="number" id="bm-amount" min="0" step="0.01"></div>
+        <div class="fg"><label>Fecha presupuesto</label><input type="date" id="bm-date"></div>
+        <div class="fg full"><label>Notas</label><textarea id="bm-notes" style="min-height:60px"></textarea></div>
+        <div class="fg full">
+          <label>Adjuntar PDF / imagen del presupuesto (máx. 1.5 MB)</label>
+          <div class="budget-file-area" onclick="document.getElementById('bm-file').click()">
+            <span class="file-ico">📎</span>
+            <div class="file-txt">
+              <span id="bm-file-name">Haz clic para seleccionar archivo</span>
+              <small>PDF, JPG o PNG · Máximo 1.5 MB</small>
+            </div>
+          </div>
+          <input type="file" id="bm-file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="onBudgetFileChange()">
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn-secondary" onclick="closeModal('modal-budget')">Cancelar</button>
+      <button class="btn-primary" id="budget-save-btn" onclick="saveBudget()">Guardar presupuesto</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SETTINGS -->
+<div class="overlay" id="modal-settings">
+  <div class="modal">
+    <div class="modal-hd"><h2>Configuración de avisos</h2><button class="modal-x" onclick="closeModal('modal-settings')">✕</button></div>
+    <div class="modal-bd">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="fg"><label>📧 Email</label><input type="email" id="cfg-email" placeholder="responsable@edificio.com"></div>
+        <div class="fg"><label>📱 WhatsApp (con prefijo)</label><input type="tel" id="cfg-wa" placeholder="+376600123456"></div>
+        <div style="background:var(--navy-bg);border:1px solid #C7D9F0;border-radius:8px;padding:14px;font-size:.8rem;color:var(--navy-mid);line-height:1.6">
+          <strong>ℹ Sincronización en tiempo real</strong><br>
+          Los datos se guardan en Firebase y se sincronizan automáticamente entre todos los dispositivos. Cualquier cambio aparece al instante en todas las pantallas.
+        </div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn-secondary" onclick="closeModal('modal-settings')">Cancelar</button>
+      <button class="btn-primary" onclick="saveSettings()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDzQGoxA4nKWo1IW3AOjm_B25UX11hunOc",
+  authDomain: "andorra-mantenimiento-bd58d.firebaseapp.com",
+  projectId: "andorra-mantenimiento-bd58d",
+  storageBucket: "andorra-mantenimiento-bd58d.firebasestorage.app",
+  messagingSenderId: "1041483775292",
+  appId: "1:1041483775292:web:ddfcbf90d447bb5372f239"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+let tasks=[], budgets=[], costEntries=[], settings={email:'',wa:''};
+let editId=null, editBudgetId=null, editCostId=null, taskFilter='all', budgetFilter='all';
+let openCommentRows = new Set();
+
+function setSyncStatus(state) {
+  const dot=document.getElementById('sync-dot'), label=document.getElementById('sync-label');
+  dot.className='sync-dot '+(state==='ok'?'':state==='loading'?'loading':'off');
+  label.textContent=state==='ok'?'Sincronizado':state==='loading'?'Conectando...':'Sin conexión';
+}
+
+async function loadSettings() {
+  try { const s=await getDoc(doc(db,'config','settings')); if(s.exists()) settings=s.data(); } catch(e){}
+}
+
+function startListeners() {
+  onSnapshot(collection(db,'tasks'), snap=>{
+    tasks=snap.docs.map(d=>({id:d.id,...d.data()}));
+    tasks.sort((a,b)=>{
+      if(!a.proxima&&!b.proxima) return 0;
+      if(!a.proxima) return 1; if(!b.proxima) return -1;
+      return a.proxima.localeCompare(b.proxima);
+    });
+    renderTasks(); updateBadges();
+  }, ()=>setSyncStatus('off'));
+  onSnapshot(collection(db,'budgets'), snap=>{
+    budgets=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderPresupuestos(); updateBadges();
+  });
+  onSnapshot(collection(db,'costEntries'), snap=>{
+    costEntries=snap.docs.map(d=>({id:d.id,...d.data()}));
+    costEntries.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    renderCostes();
+  });
+  setSyncStatus('ok');
+}
+
+async function checkAndSeed() {
+  document.getElementById('loading-msg').textContent='Cargando datos...';
+  const snap=await getDoc(doc(db,'config','seeded'));
+  if(snap.exists()) return;
+  document.getElementById('loading-msg').textContent='Cargando tareas iniciales...';
+  const today=new Date();
+  const fmt=d=>d.toISOString().split('T')[0];
+  const add=(d,n)=>{const r=new Date(d);r.setDate(r.getDate()+n);return r;};
+  const sub=(d,n)=>add(d,-n);
+  const comunData=[
+    {desc:'Ascensor – revisión periódica y mantenimiento',periodo:'12',empresa:'Schindler',coste:'350'},
+    {desc:'Portero automático / videoportero – revisión',periodo:'12',empresa:'',coste:'80'},
+    {desc:'Iluminación zonas comunes – revisión y sustitución',periodo:'6',empresa:'',coste:'60'},
+    {desc:'Cuadro eléctrico comunitario – revisión',periodo:'12',empresa:'Electrans SA',coste:'120'},
+    {desc:'Extintores – recarga y revisión',periodo:'12',empresa:'Extinsal',coste:'90'},
+    {desc:'Limpieza cisterna / depósito de agua',periodo:'6',empresa:'',coste:'150'},
+    {desc:'Revisión desagües y bajantes',periodo:'12',empresa:'',coste:'100'},
+    {desc:'Caldera central – revisión',periodo:'12',empresa:'Roca Técnic',coste:'280'},
+    {desc:'Tejado / cubierta – inspección filtraciones',periodo:'12',empresa:'',coste:'200'},
+    {desc:'Garaje – puertas automáticas y ventilación',periodo:'6',empresa:'',coste:'130'},
+    {desc:'Seguro del edificio – renovación anual',periodo:'12',empresa:'AXA Andorra',coste:'1200'},
+  ];
+  const pisoData=[
+    {desc:'Caldera individual – revisión anual',periodo:'12',coste:'120'},
+    {desc:'Instalación eléctrica – revisión',periodo:'24',coste:'180'},
+    {desc:'Fontanería – grifos, tuberías y desagüe',periodo:'12',coste:'80'},
+    {desc:'Ventanas y persianas – engrase',periodo:'6',coste:'40'},
+    {desc:'Detector de humos – batería',periodo:'12',coste:'15'},
+  ];
+  const pisos=['2º 1ª','2º 2ª','3º 1ª','3º 2ª','4º 1ª','4º 2ª','5º 1ª','5º 2ª','Ático'];
+  const batch=[];
+  comunData.forEach(t=>{
+    const off=Math.floor(Math.random()*280)+40;
+    const ul=sub(today,off); const pr=add(ul,parseInt(t.periodo)*30);
+    batch.push(addDoc(collection(db,'tasks'),{desc:t.desc,zona:'Zona Comunitaria',empresa:t.empresa,ultima:fmt(ul),proxima:fmt(pr),coste:t.coste,periodo:t.periodo,status:'pending',notes:'',hasBudget:'no',budgetAmount:'',budgetEmpresa:''}));
+  });
+  pisos.forEach(piso=>{
+    pisoData.forEach(t=>{
+      const off=Math.floor(Math.random()*280)+40;
+      const ul=sub(today,off); const pr=add(ul,parseInt(t.periodo)*30);
+      batch.push(addDoc(collection(db,'tasks'),{desc:t.desc,zona:piso,empresa:'',ultima:fmt(ul),proxima:fmt(pr),coste:t.coste,periodo:t.periodo,status:'pending',notes:'',hasBudget:'no',budgetAmount:'',budgetEmpresa:''}));
+    });
+  });
+  batch.push(addDoc(collection(db,'budgets'),{desc:'Sustitución motor ascensor',zona:'Zona Comunitaria',empresa:'Schindler SA',amount:'4500',date:fmt(sub(today,30)),notes:'Presupuesto válido 60 días',status:'pending',fileData:null,fileName:null}));
+  batch.push(addDoc(collection(db,'budgets'),{desc:'Impermeabilización tejado',zona:'Zona Comunitaria',empresa:'Cobertures Nord SL',amount:'2800',date:fmt(sub(today,15)),notes:'Incluye materiales y mano de obra',status:'accepted',fileData:null,fileName:null}));
+  await Promise.all(batch);
+  await setDoc(doc(db,'config','seeded'),{done:true});
+}
+
+function getStatus(t){
+  if(t.status==='done') return 'done';
+  if(!t.proxima) return 'none';
+  const today=new Date(); today.setHours(0,0,0,0);
+  const diff=Math.floor((new Date(t.proxima+'T00:00:00')-today)/86400000);
+  if(diff<0) return 'danger'; if(diff<=7) return 'warn'; return 'ok';
+}
+function daysLeft(dt){
+  if(!dt) return null;
+  const today=new Date(); today.setHours(0,0,0,0);
+  return Math.floor((new Date(dt+'T00:00:00')-today)/86400000);
+}
+function statusPill(t){
+  const s=getStatus(t),d=daysLeft(t.proxima);
+  if(s==='done') return`<span class="pill pill-done">✓ Completada</span>`;
+  if(s==='none') return`<span class="pill pill-none">Sin fecha</span>`;
+  if(s==='danger') return`<span class="pill pill-danger">🔴 Vencida${d<0?` hace ${Math.abs(d)}d`:''}</span>`;
+  if(s==='warn') return`<span class="pill pill-warn">⚠ En ${d} día${d!==1?'s':''}</span>`;
+  return`<span class="pill pill-ok">✓ En ${d}d</span>`;
+}
+function fmtCost(v){if(!v||isNaN(parseFloat(v))) return'—';return parseFloat(v).toLocaleString('es-ES',{minimumFractionDigits:0})+' €';}
+
+function updateBadges(){
+  const d=tasks.filter(t=>getStatus(t)==='danger'||getStatus(t)==='warn').length;
+  const nb=document.getElementById('nb-danger'); nb.textContent=d; nb.style.display=d>0?'':'none';
+  const p=budgets.filter(b=>b.status==='pending').length;
+  const nb2=document.getElementById('nb-budget'); nb2.textContent=p; nb2.style.display=p>0?'':'none';
+}
+
+window.nav=function(btn,page){
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const titles={tareas:'Todas las tareas',nueva:'Añadir nueva tarea',costes:'Control de costes',presupuestos:'Presupuestos'};
+  document.getElementById('page-title').textContent=titles[page];
+  if(page==='costes') renderCostes();
+  if(page==='presupuestos') renderPresupuestos();
+};
+
+// ── TAREAS ────────────────────────────────────
+window.setTF=function(f){
+  taskFilter=f;
+  ['all','warn','danger','done'].forEach(x=>document.getElementById('cf-'+x).classList.toggle('on',x===f));
+  renderTasks();
+};
+
+function renderTasks(){
+  const q=(document.getElementById('q-tasks').value||'').toLowerCase();
+  const zona=document.getElementById('zona-filter').value;
+  document.getElementById('k-total').textContent=tasks.length;
+  document.getElementById('k-done').textContent=tasks.filter(t=>t.status==='done').length;
+  document.getElementById('k-warn').textContent=tasks.filter(t=>getStatus(t)==='warn').length;
+  document.getElementById('k-danger').textContent=tasks.filter(t=>getStatus(t)==='danger').length;
+
+  const urgent=tasks.filter(t=>getStatus(t)==='danger'||getStatus(t)==='warn');
+  const banner=document.getElementById('alerts-banner');
+  if(urgent.length>0){
+    banner.classList.add('show');
+    document.getElementById('alert-text').textContent=`⚠ ${urgent.length} tarea${urgent.length!==1?'s':''} urgente${urgent.length!==1?'s':''}:`;
+    document.getElementById('alert-chips').innerHTML=urgent.slice(0,4).map(t=>`<span class="alert-chip ${getStatus(t)==='danger'?'red':''}">${t.zona}: ${t.desc.slice(0,28)}${t.desc.length>28?'…':''}</span>`).join('')+(urgent.length>4?`<span style="font-size:.78rem;color:var(--amber);font-weight:600"> +${urgent.length-4} más</span>`:'');
+  } else banner.classList.remove('show');
+
+  let filtered=tasks.filter(t=>{
+    if(zona&&t.zona!==zona) return false;
+    if(q&&!t.desc.toLowerCase().includes(q)&&!t.zona.toLowerCase().includes(q)&&!(t.empresa||'').toLowerCase().includes(q)) return false;
+    if(taskFilter==='warn') return getStatus(t)==='warn';
+    if(taskFilter==='danger') return getStatus(t)==='danger';
+    if(taskFilter==='done') return t.status==='done';
+    return true;
+  });
+
+  const order=['Zona Comunitaria','2º 1ª','2º 2ª','3º 1ª','3º 2ª','4º 1ª','4º 2ª','5º 1ª','5º 2ª','Ático'];
+  const groups={};
+  filtered.forEach(t=>{if(!groups[t.zona])groups[t.zona]=[];groups[t.zona].push(t);});
+  const zonas=order.filter(z=>groups[z]);
+
+  const cont=document.getElementById('tasks-container');
+  if(!filtered.length){cont.innerHTML='<div class="empty"><div class="ico">📋</div><p>No hay tareas que coincidan con el filtro</p></div>';return;}
+
+  cont.innerHTML=zonas.map(zona=>{
+    const ts=groups[zona];
+    const color=zona==='Zona Comunitaria'?'var(--navy-mid)':zona==='Ático'?'var(--gold)':'var(--green)';
+    let rows='';
+    ts.forEach(t=>{
+      const stClass=t.status||'pending';
+      const hasComment=t.notes&&t.notes.trim();
+      const commentOpen=openCommentRows.has(t.id);
+      rows+=`<tr>
+        <td style="max-width:220px"><div style="font-weight:500">${t.desc}</div></td>
+        <td style="white-space:nowrap">${t.ultima||'—'}</td>
+        <td style="white-space:nowrap;font-weight:500">${t.proxima||'—'}</td>
+        <td style="font-variant-numeric:tabular-nums">${fmtCost(t.coste)}</td>
+        <td style="color:var(--ink2);font-size:.82rem">${t.empresa||'—'}</td>
+        <td>${statusPill(t)}</td>
+        <td>
+          <select class="status-sel ${stClass}" onchange="quickStatus('${t.id}',this.value,this)" onclick="event.stopPropagation()">
+            <option value="pending" ${t.status==='pending'?'selected':''}>Pendiente</option>
+            <option value="progress" ${t.status==='progress'?'selected':''}>En curso</option>
+            <option value="done" ${t.status==='done'?'selected':''}>Completada</option>
+          </select>
+        </td>
+        <td>
+          <button class="comment-toggle" onclick="toggleComment('${t.id}')">${hasComment?'💬 Ver nota':'💬 Nota'}</button>
+        </td>
+        <td><div class="row-actions">
+          <button class="act-btn" onclick="openEdit('${t.id}')">✏ Editar</button>
+          <button class="act-btn del" onclick="delTask('${t.id}')">✕</button>
+        </div></td>
+      </tr>`;
+      if(commentOpen){
+        rows+=`<tr class="comment-row" id="crow-${t.id}">
+          <td colspan="9">
+            ${hasComment?`<div class="existing-comment">💬 ${t.notes}</div>`:''}
+            <textarea class="comment-area" id="cta-${t.id}" placeholder="Escribe aquí un comentario o nota...">${t.notes||''}</textarea>
+            <button class="comment-save-btn" onclick="saveComment('${t.id}')">Guardar comentario</button>
+            <button style="margin-top:5px;margin-left:6px;padding:5px 12px;border:1px solid var(--border);border-radius:5px;font-size:.75rem;background:transparent;cursor:pointer;font-family:'Outfit',sans-serif" onclick="toggleComment('${t.id}')">Cerrar</button>
+          </td>
+        </tr>`;
+      }
+    });
+    return`<div class="table-wrap">
+      <div class="section-row" onclick="toggleSection(this)">
+        <span class="s-badge" style="background:${color}">${zona}</span>
+        <span class="s-count">${ts.length} tarea${ts.length!==1?'s':''}</span>
+        <span class="s-arrow">▼</span>
+      </div>
+      <div class="section-body">
+        <table class="crm"><thead><tr>
+          <th>Descripción</th><th>Última revisión</th><th>Próxima revisión</th>
+          <th>Coste</th><th>Empresa</th><th>Plazo</th><th>Estado</th><th>Comentario</th><th></th>
+        </tr></thead><tbody>${rows}</tbody></table>
+      </div>
+    </div>`;
+  }).join('');
+}
+window.renderTasks=renderTasks;
+
+window.toggleComment=function(id){
+  if(openCommentRows.has(id)) openCommentRows.delete(id);
+  else openCommentRows.add(id);
+  renderTasks();
+};
+window.saveComment=async function(id){
+  const val=document.getElementById('cta-'+id).value.trim();
+  await updateDoc(doc(db,'tasks',id),{notes:val});
+  openCommentRows.delete(id);
+  toast('Comentario guardado ✓');
+};
+window.toggleSection=function(el){el.classList.toggle('collapsed');el.nextElementSibling.classList.toggle('hidden');};
+window.quickStatus=async function(id,val,sel){
+  sel.className=`status-sel ${val}`;
+  await updateDoc(doc(db,'tasks',id),{status:val});
+  toast('Estado actualizado ✓');
+};
+window.delTask=async function(id){
+  if(!confirm('¿Eliminar esta tarea?')) return;
+  await deleteDoc(doc(db,'tasks',id)); toast('Tarea eliminada');
+};
+window.openEdit=function(id){
+  const t=tasks.find(x=>x.id===id); if(!t) return;
+  editId=id;
+  document.getElementById('ef-desc').value=t.desc;
+  document.getElementById('ef-zona').value=t.zona;
+  document.getElementById('ef-empresa').value=t.empresa||'';
+  document.getElementById('ef-ultima').value=t.ultima||'';
+  document.getElementById('ef-proxima').value=t.proxima||'';
+  document.getElementById('ef-coste').value=t.coste||'';
+  document.getElementById('ef-periodo').value=t.periodo||'';
+  document.getElementById('ef-status').value=t.status||'pending';
+  document.getElementById('ef-notes').value=t.notes||'';
+  document.getElementById('ef-has-budget').value=t.hasBudget||'no';
+  document.getElementById('ef-budget-amount').value=t.budgetAmount||'';
+  document.getElementById('ef-budget-empresa').value=t.budgetEmpresa||'';
+  toggleBudgetFields('ef');
+  document.getElementById('modal-edit').classList.add('open');
+};
+window.saveEdit=async function(){
+  const desc=document.getElementById('ef-desc').value.trim();
+  if(!desc){toast('La descripción es obligatoria','warn');return;}
+  await updateDoc(doc(db,'tasks',editId),{
+    desc,zona:document.getElementById('ef-zona').value,
+    empresa:document.getElementById('ef-empresa').value.trim(),
+    ultima:document.getElementById('ef-ultima').value,
+    proxima:document.getElementById('ef-proxima').value,
+    coste:document.getElementById('ef-coste').value,
+    periodo:document.getElementById('ef-periodo').value,
+    status:document.getElementById('ef-status').value,
+    notes:document.getElementById('ef-notes').value.trim(),
+    hasBudget:document.getElementById('ef-has-budget').value,
+    budgetAmount:document.getElementById('ef-budget-amount').value,
+    budgetEmpresa:document.getElementById('ef-budget-empresa').value.trim(),
+  });
+  closeModal('modal-edit'); toast('Tarea actualizada ✓');
+};
+window.addTask=async function(){
+  const desc=document.getElementById('nf-desc').value.trim();
+  if(!desc){toast('La descripción es obligatoria','warn');return;}
+  const hasBudget=document.getElementById('nf-has-budget').value;
+  const budgetAmount=document.getElementById('nf-budget-amount').value;
+  const budgetEmpresa=document.getElementById('nf-budget-empresa').value.trim();
+  await addDoc(collection(db,'tasks'),{
+    desc,zona:document.getElementById('nf-zona').value,
+    empresa:document.getElementById('nf-empresa').value.trim(),
+    ultima:document.getElementById('nf-ultima').value,
+    proxima:document.getElementById('nf-proxima').value,
+    coste:document.getElementById('nf-coste').value,
+    periodo:document.getElementById('nf-periodo').value,
+    status:document.getElementById('nf-status').value,
+    notes:document.getElementById('nf-notes').value.trim(),
+    hasBudget,budgetAmount,budgetEmpresa
+  });
+  if(hasBudget==='yes'&&budgetAmount){
+    await addDoc(collection(db,'budgets'),{
+      desc,zona:document.getElementById('nf-zona').value,
+      empresa:budgetEmpresa,amount:budgetAmount,
+      date:new Date().toISOString().split('T')[0],notes:'',status:'pending',fileData:null,fileName:null
+    });
+  }
+  clearForm(); toast('Tarea añadida ✓');
+};
+window.clearForm=function(){
+  ['nf-desc','nf-empresa','nf-ultima','nf-proxima','nf-coste','nf-notes','nf-budget-amount','nf-budget-empresa'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('nf-zona').value='Zona Comunitaria';
+  document.getElementById('nf-periodo').value='';
+  document.getElementById('nf-status').value='pending';
+  document.getElementById('nf-has-budget').value='no';
+  toggleBudgetFields('nf');
+};
+window.toggleBudgetFields=function(p){
+  const v=document.getElementById(p+'-has-budget').value==='yes';
+  document.getElementById(p+'-ba-wrap').style.display=v?'':'none';
+  document.getElementById(p+'-be-wrap').style.display=v?'':'none';
+};
+
+// ── COSTES ────────────────────────────────────
+function renderCostes(){
+  const q=(document.getElementById('q-costes').value||'').toLowerCase();
+  const zona=document.getElementById('zona-filter-cost').value;
+
+  const allWithCost=[
+    ...tasks.filter(t=>t.coste&&!isNaN(parseFloat(t.coste))).map(t=>({
+      id:t.id,source:'task',desc:t.desc,zona:t.zona,empresa:t.empresa||'',
+      date:t.proxima||t.ultima||'',amount:parseFloat(t.coste),status:t.status,
+      fileData:null,fileName:null,notes:t.notes||''
+    })),
+    ...costEntries.map(e=>({
+      id:e.id,source:'entry',desc:e.desc,zona:e.zona,empresa:e.empresa||'',
+      date:e.date||'',amount:parseFloat(e.amount||0),status:e.status,
+      fileData:e.fileData||null,fileName:e.fileName||null,notes:e.notes||''
+    }))
+  ].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+  const filtered=allWithCost.filter(x=>{
+    if(zona&&x.zona!==zona) return false;
+    if(q&&!x.desc.toLowerCase().includes(q)&&!x.zona.toLowerCase().includes(q)&&!(x.empresa||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  const total=filtered.reduce((s,x)=>s+x.amount,0);
+  const done=filtered.filter(x=>x.status==='done').reduce((s,x)=>s+x.amount,0);
+  const pend=filtered.filter(x=>x.status!=='done').reduce((s,x)=>s+x.amount,0);
+  document.getElementById('cc-total').textContent=total.toLocaleString('es-ES',{minimumFractionDigits:0})+' €';
+  document.getElementById('cc-done').textContent=done.toLocaleString('es-ES',{minimumFractionDigits:0})+' €';
+  document.getElementById('cc-pending').textContent=pend.toLocaleString('es-ES',{minimumFractionDigits:0})+' €';
+  document.getElementById('cc-count').textContent=filtered.length;
+
+  const order=['Zona Comunitaria','2º 1ª','2º 2ª','3º 1ª','3º 2ª','4º 1ª','4º 2ª','5º 1ª','5º 2ª','Ático'];
+  const byZone={};
+  filtered.forEach(x=>{byZone[x.zona]=(byZone[x.zona]||0)+x.amount;});
+  const maxZ=Math.max(...Object.values(byZone),1);
+  document.getElementById('cost-by-zone').innerHTML=order.filter(z=>byZone[z]).map(z=>`
+    <div class="zone-cost-row">
+      <div class="zone-name">${z}</div>
+      <div class="zone-bar-wrap"><div class="zone-bar" style="width:${(byZone[z]/maxZ*100).toFixed(1)}%"></div></div>
+      <div class="zone-val">${byZone[z].toLocaleString('es-ES',{minimumFractionDigits:0})} €</div>
+    </div>`).join('');
+
+  const rows=filtered.map(x=>{
+    const fileCell=x.fileData
+      ?`<a class="file-link" href="${x.fileData}" target="_blank" download="${x.fileName||'archivo'}">📎 ${(x.fileName||'archivo').slice(0,18)}${(x.fileName||'').length>18?'…':''}</a>`
+      :x.source==='entry'
+        ?`<button class="file-btn" onclick="attachFileCost('${x.id}')">📎 Adjuntar</button>`
+        :`<span style="color:var(--ink3);font-size:.78rem">—</span>`;
+    const actions=x.source==='entry'
+      ?`<button class="act-btn" onclick="openEditCost('${x.id}')">✏</button><button class="act-btn del" onclick="delCostEntry('${x.id}')">✕</button>`
+      :'';
+    const hasNote=x.notes&&x.notes.trim();
+    return`<tr>
+      <td style="font-weight:500;max-width:200px">
+        <div>${x.desc}</div>
+        ${hasNote?`<div style="font-size:.73rem;color:var(--ink3);font-style:italic;margin-top:2px">💬 ${x.notes.slice(0,50)}${x.notes.length>50?'…':''}</div>`:''}
+      </td>
+      <td><span style="font-size:.75rem;background:var(--paper3);padding:2px 8px;border-radius:10px">${x.zona}</span></td>
+      <td style="color:var(--ink2);font-size:.82rem">${x.empresa||'—'}</td>
+      <td style="white-space:nowrap;color:var(--ink2)">${x.date||'—'}</td>
+      <td style="font-weight:600;font-variant-numeric:tabular-nums">${x.amount.toLocaleString('es-ES',{minimumFractionDigits:0})} €</td>
+      <td>${x.status==='done'?'<span class="pill pill-done">Pagado</span>':'<span class="pill pill-warn">Pendiente</span>'}</td>
+      <td>${fileCell}</td>
+      <td><div class="row-actions">${actions}</div></td>
+    </tr>`;
+  }).join('');
+
+  const totalRow=`<tr class="cost-total-row">
+    <td colspan="4" style="text-align:right;padding-right:8px">TOTAL</td>
+    <td>${total.toLocaleString('es-ES',{minimumFractionDigits:0})} €</td>
+    <td colspan="3"></td>
+  </tr>`;
+
+  document.getElementById('cost-tbody').innerHTML=(filtered.length?rows+totalRow:'<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--ink3)">No hay entradas de coste</td></tr>');
+}
+window.renderCostes=renderCostes;
+
+window.openAddCostEntry=function(){
+  editCostId=null;
+  document.getElementById('cost-modal-title').textContent='Nueva entrada de coste';
+  ['cm-desc','cm-empresa','cm-amount','cm-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cm-zona').value='Zona Comunitaria';
+  document.getElementById('cm-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('cm-status').value='pending';
+  document.getElementById('cm-file').value='';
+  document.getElementById('cm-file-current').textContent='';
+  document.getElementById('modal-cost').classList.add('open');
+};
+window.openEditCost=function(id){
+  const e=costEntries.find(x=>x.id===id); if(!e) return;
+  editCostId=id;
+  document.getElementById('cost-modal-title').textContent='Editar entrada de coste';
+  document.getElementById('cm-desc').value=e.desc||'';
+  document.getElementById('cm-zona').value=e.zona||'Zona Comunitaria';
+  document.getElementById('cm-empresa').value=e.empresa||'';
+  document.getElementById('cm-date').value=e.date||'';
+  document.getElementById('cm-amount').value=e.amount||'';
+  document.getElementById('cm-status').value=e.status||'pending';
+  document.getElementById('cm-notes').value=e.notes||'';
+  document.getElementById('cm-file').value='';
+  document.getElementById('cm-file-current').textContent=e.fileName?`Archivo actual: ${e.fileName}`:'';
+  document.getElementById('modal-cost').classList.add('open');
+};
+window.saveCostEntry=async function(){
+  const desc=document.getElementById('cm-desc').value.trim();
+  const amount=document.getElementById('cm-amount').value;
+  if(!desc||!amount){toast('Concepto e importe son obligatorios','warn');return;}
+  const btn=document.getElementById('cost-save-btn');
+  btn.textContent='Guardando...'; btn.disabled=true;
+  let fileData=null,fileName=null;
+  const fi=document.getElementById('cm-file');
+  if(fi.files[0]){
+    const file=fi.files[0];
+    if(file.size>1500000){toast('El archivo no debe superar 1.5 MB','warn');btn.textContent='Guardar';btn.disabled=false;return;}
+    fileData=await fileToBase64(file); fileName=file.name;
+  } else if(editCostId){
+    const ex=costEntries.find(x=>x.id===editCostId);
+    if(ex){fileData=ex.fileData;fileName=ex.fileName;}
+  }
+  const data={desc,zona:document.getElementById('cm-zona').value,empresa:document.getElementById('cm-empresa').value.trim(),date:document.getElementById('cm-date').value,amount,status:document.getElementById('cm-status').value,notes:document.getElementById('cm-notes').value.trim(),fileData,fileName};
+  if(editCostId) await updateDoc(doc(db,'costEntries',editCostId),data);
+  else await addDoc(collection(db,'costEntries'),data);
+  btn.textContent='Guardar'; btn.disabled=false;
+  closeModal('modal-cost'); toast(editCostId?'Entrada actualizada ✓':'Entrada añadida ✓');
+};
+window.attachFileCost=async function(id){
+  const input=document.createElement('input'); input.type='file'; input.accept='.pdf,.jpg,.jpeg,.png';
+  input.onchange=async()=>{
+    const file=input.files[0]; if(!file) return;
+    if(file.size>1500000){toast('El archivo no debe superar 1.5 MB','warn');return;}
+    toast('Subiendo archivo...');
+    const fileData=await fileToBase64(file);
+    await updateDoc(doc(db,'costEntries',id),{fileData,fileName:file.name});
+    toast('Archivo adjuntado ✓');
+  };
+  input.click();
+};
+window.delCostEntry=async function(id){
+  if(!confirm('¿Eliminar esta entrada?')) return;
+  await deleteDoc(doc(db,'costEntries',id)); toast('Entrada eliminada');
+};
+function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej();r.readAsDataURL(file);});}
+
+// ── PRESUPUESTOS ─────────────────────────────
+window.setBF=function(f){
+  budgetFilter=f;
+  ['all','pending','accepted','rejected'].forEach(x=>document.getElementById('bf-'+x).classList.toggle('on',x===f));
+  renderPresupuestos();
+};
+
+function renderPresupuestos(){
+  const q=(document.getElementById('q-presupuestos').value||'').toLowerCase();
+  document.getElementById('bp-total').textContent=budgets.length;
+  document.getElementById('bp-accepted').textContent=budgets.filter(b=>b.status==='accepted').length;
+  document.getElementById('bp-pending').textContent=budgets.filter(b=>b.status==='pending').length;
+
+  let filtered=budgets.filter(b=>{
+    if(budgetFilter!=='all'&&b.status!==budgetFilter) return false;
+    if(q&&!b.desc.toLowerCase().includes(q)&&!b.zona.toLowerCase().includes(q)&&!(b.empresa||'').toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  document.getElementById('budget-grid').innerHTML=filtered.map(b=>{
+    const sClass={pending:'bs-pending',accepted:'bs-accepted',rejected:'bs-rejected'}[b.status]||'bs-pending';
+    const sLabel={pending:'Pendiente',accepted:'Aceptado',rejected:'Rechazado'}[b.status]||'Pendiente';
+    const fileArea=b.fileData
+      ?`<a class="file-link" href="${b.fileData}" target="_blank" download="${b.fileName||'presupuesto'}" style="display:inline-flex;align-items:center;gap:6px;font-size:.8rem">📎 ${(b.fileName||'presupuesto').slice(0,24)}${(b.fileName||'').length>24?'…':''}</a>`
+      :`<button class="file-btn" style="width:100%;text-align:center;padding:8px" onclick="attachFileBudget('${b.id}')">📎 Adjuntar PDF / imagen</button>`;
+    return`<div class="budget-card">
+      <div class="bc-header">
+        <div><div class="bc-desc">${b.desc}</div><div class="bc-zone">${b.zona}</div></div>
+        <div class="bc-amount">${parseFloat(b.amount||0).toLocaleString('es-ES',{minimumFractionDigits:0})} €</div>
+      </div>
+      <div class="bc-meta">
+        ${b.date?`<span>📅 ${b.date}</span>`:''}
+        ${b.empresa?`<span>🏢 ${b.empresa}</span>`:''}
+      </div>
+      ${b.notes?`<div style="font-size:.78rem;color:var(--ink3);line-height:1.4">${b.notes}</div>`:''}
+      <div>${fileArea}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <span class="budget-status ${sClass}">${sLabel}</span>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="act-btn" onclick="editBudget('${b.id}')">✏</button>
+          ${b.status==='pending'?`<button class="act-btn" style="color:var(--green)" onclick="setBudgetStatus('${b.id}','accepted')">✓ Aceptar</button><button class="act-btn" style="color:var(--red)" onclick="setBudgetStatus('${b.id}','rejected')">✕ Rechazar</button>`:''}
+          <button class="act-btn del" onclick="delBudget('${b.id}')">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('')+`<button class="add-budget-btn" onclick="openNewBudget()">➕ Añadir presupuesto</button>`;
+}
+window.renderPresupuestos=renderPresupuestos;
+
+window.onBudgetFileChange=function(){
+  const f=document.getElementById('bm-file').files[0];
+  document.getElementById('bm-file-name').textContent=f?f.name:'Haz clic para seleccionar archivo';
+};
+window.attachFileBudget=async function(id){
+  const input=document.createElement('input'); input.type='file'; input.accept='.pdf,.jpg,.jpeg,.png';
+  input.onchange=async()=>{
+    const file=input.files[0]; if(!file) return;
+    if(file.size>1500000){toast('El archivo no debe superar 1.5 MB','warn');return;}
+    toast('Subiendo archivo...');
+    const fileData=await fileToBase64(file);
+    await updateDoc(doc(db,'budgets',id),{fileData,fileName:file.name});
+    toast('Archivo adjuntado ✓');
+  };
+  input.click();
+};
+window.setBudgetStatus=async function(id,status){
+  await updateDoc(doc(db,'budgets',id),{status});
+  toast({accepted:'Presupuesto aceptado ✓',rejected:'Presupuesto rechazado'}[status]);
+};
+to?')) return;
+  await deleteDoc(doc(db,'budgets',id)); toast('Presupuesto eliminado');
+};
+window.openNewBudget=function(){
+  editBudgetId=null;
+  document.getElementById('bm-title').textContent='Nuevo presupuesto';
+  ['bm-desc','bm-empresa','bm-amount','bm-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('bm-zona').value='Zona Comunitaria';
+  document.getElementById('bm-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('bm-file').value='';
+  document.getElementById('bm-file-name').textContent='Haz clic para seleccionar archivo';
+  document.getElementById('modal-budget').classList.add('open');
+};
+window.editBudget=function(id){
+  const b=budgets.find(x=>x.id===id); if(!b) return;
+  editBudgetId=id;
+  document.getElementById('bm-title').textContent='Editar presupuesto';
+  document.getElementById('bm-desc').value=b.desc;
+  document.getElementById('bm-zona').value=b.zona;
+  document.getElementById('bm-empresa').value=b.empresa||'';
+  document.getElementById('bm-amount').value=b.amount;
+  document.getElementById('bm-date').value=b.date||'';
+  document.getElementById('bm-notes').value=b.notes||'';
+  document.getElementById('bm-file').value='';
+  document.getElementById('bm-file-name').textContent=b.fileName||'Haz clic para seleccionar archivo';
+  document.getElementById('modal-budget').classList.add('open');
+};
+window.saveBudget=async function(){
+  const desc=document.getElementById('bm-desc').value.trim();
+  const amount=document.getElementById('bm-amount').value;
+  if(!desc||!amount){toast('Descripción e importe son obligatorios','warn');return;}
+  const btn=document.getElementById('budget-save-btn');
+  btn.textContent='Guardando...'; btn.disabled=true;
+  let fileData=null,fileName=null;
+  const fi=document.getElementById('bm-file');
+  if(fi.files[0]){
+    const file=fi.files[0];
+    if(file.size>1500000){toast('El archivo no debe superar 1.5 MB','warn');btn.textContent='Guardar presupuesto';btn.disabled=false;return;}
+    fileData=await fileToBase64(file); fileName=file.name;
+  } else if(editBudgetId){
+    const ex=budgets.find(x=>x.id===editBudgetId);
+    if(ex){fileData=ex.fileData;fileName=ex.fileName;}
+  }
+  const data={desc,zona:document.getElementById('bm-zona').value,empresa:document.getElementById('bm-empresa').value.trim(),amount,date:document.getElementById('bm-date').value,notes:document.getElementById('bm-notes').value.trim(),fileData,fileName};
+  if(editBudgetId) await updateDoc(doc(db,'budgets',editBudgetId),data);
+  else await addDoc(collection(db,'budgets'),{...data,status:'pending'});
+  btn.textContent='Guardar presupuesto'; btn.disabled=false;
+  closeModal('modal-budget'); toast(editBudgetId?'Presupuesto actualizado ✓':'Presupuesto añadido ✓');
+};
+
+window.openSettings=function(){
+  document.getElementById('cfg-email').value=settings.email||'';
+  document.getElementById('cfg-wa').value=settings.wa||'';
+  document.getElementById('modal-settings').classList.add('open');
+};
+window.saveSettings=async function(){
+  settings.email=document.getElementById('cfg-email').value.trim();
+  settings.wa=document.getElementById('cfg-wa').value.trim();
+  await setDoc(doc(db,'config','settings'),settings);
+  closeModal('modal-settings'); toast('Configuración guardada ✓');
+};
+window.sendAlert=function(){
+  const urgent=tasks.filter(t=>getStatus(t)==='danger'||getStatus(t)==='warn');
+  if(!urgent.length){toast('No hay tareas urgentes en este momento 🎉');return;}
+  const lines=urgent.map(t=>{const d=daysLeft(t.proxima);const e=d<0?`VENCIDA hace ${Math.abs(d)} días`:d===0?'HOY':`en ${d} días`;return`• [${t.zona}] ${t.desc} → ${e}`;});
+  const msg=`⚠️ ANDORRA MANTENIMIENTO\n\nHay ${urgent.length} tarea${urgent.length!==1?'s':''} urgente${urgent.length!==1?'s':''}:\n\n${lines.join('\n')}\n\nFecha: ${new Date().toLocaleDateString('es-ES')}`;
+  const wa=(settings.wa||'').replace(/\s+/g,'');
+  if(wa) window.open(`https://wa.me/${wa.replace('+','')}?text=${encodeURIComponent(msg)}`,'_blank');
+  else toast('⚙ Configura un número de WhatsApp primero','warn');
+  if(settings.email) window.open(`mailto:${settings.email}?subject=${encodeURIComponent('⚠ Andorra Mantenimiento – Tareas urgentes')}&body=${encodeURIComponent(msg)}`,'_blank');
+};
+
+window.closeModal=function(id){document.getElementById(id).classList.remove('open');};
+window.toast=function(msg,type='ok'){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.style.background=type==='warn'?'var(--red)':'var(--ink)';
+  el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2800);
+};
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+async function boot(){
+  try{
+    await loadSettings();
+    await checkAndSeed();
+    startListeners();
+    document.getElementById('loading-msg').textContent='¡Listo!';
+    setTimeout(()=>document.getElementById('loading').classList.add('hidden'),400);
+  }catch(err){
+    document.getElementById('loading-msg').textContent='Error de conexión. Comprueba tu internet.';
+    setSyncStatus('off'); console.error(err);
+  }
+}
+boot();
+</script>
+</body>
+</html>
