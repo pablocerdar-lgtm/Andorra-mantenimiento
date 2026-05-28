@@ -21,7 +21,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Outfit',sans-serif;background:var(--paper2);color:var(--ink);min-height:100vh;font-size:15px}
-
+ 
 .sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--navy);display:flex;flex-direction:column;z-index:50;box-shadow:4px 0 24px rgba(0,0,0,.15)}
 .sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
 .sidebar-logo h1{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;letter-spacing:.01em;line-height:1.3}
@@ -42,7 +42,7 @@ body{font-family:'Outfit',sans-serif;background:var(--paper2);color:var(--ink);m
 .btn-alert:hover{background:rgba(180,83,9,.35)}
 .btn-settings{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;border-radius:7px;margin-top:6px;background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.6);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .18s;font-family:'Outfit',sans-serif}
 .btn-settings:hover{background:rgba(255,255,255,.08);color:#fff}
-
+ 
 .main{margin-left:240px;min-height:100vh;display:flex;flex-direction:column}
 .topbar{position:sticky;top:0;z-index:40;background:rgba(250,250,248,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between}
 .page-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--ink);font-weight:600}
@@ -51,25 +51,25 @@ body{font-family:'Outfit',sans-serif;background:var(--paper2);color:var(--ink);m
 .btn-primary:hover{background:var(--navy);transform:translateY(-1px);box-shadow:0 4px 12px rgba(30,58,95,.25)}
 .btn-secondary{padding:8px 16px;background:transparent;color:var(--ink2);border:1px solid var(--border);border-radius:7px;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:500;cursor:pointer;transition:all .18s}
 .btn-secondary:hover{background:var(--paper3);border-color:var(--ink3)}
-
+ 
 .alerts-banner{display:none;background:var(--amber-bg);border-bottom:1px solid #D97706;padding:9px 28px;gap:10px;align-items:center;flex-wrap:wrap}
 .alerts-banner.show{display:flex}
 .alert-chip{background:#fff;border:1px solid #FBB534;color:var(--amber);font-size:.73rem;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap}
 .alert-chip.red{border-color:#FCA5A5;color:var(--red)}
 .alert-text{font-size:.82rem;color:var(--amber);font-weight:600}
 .btn-send-alert{margin-left:auto;padding:5px 14px;background:var(--gold);color:#fff;border:none;border-radius:6px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif}
-
+ 
 .page{display:none;padding:24px 28px;animation:fadeIn .2s ease}
 .page.active{display:block}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
+ 
 .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
 .kpi{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:6px}
 .kpi-label{font-size:.7rem;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em}
 .kpi-val{font-size:2rem;font-weight:700;line-height:1;color:var(--ink)}
 .kpi-val.green{color:var(--green)}.kpi-val.red{color:var(--red)}.kpi-val.gold{color:var(--gold)}
 .kpi-sub{font-size:.73rem;color:var(--ink3)}
-
+ 
 .filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
 .search-wrap{position:relative;flex:1;min-width:180px}
 .search-wrap input{width:100%;padding:8px 12px 8px 34px;border:1px solid var(--border);border-radius:7px;background:var(--paper);font-family:'Outfit',sans-serif;font-size:.85rem;color:var(--ink);outline:none;transition:border-color .15s}
@@ -81,7 +81,7 @@ body{font-family:'Outfit',sans-serif;background:var(--paper2);color:var(--ink);m
 .chip.danger.on{background:var(--red);border-color:var(--red)}
 .chip.done.on{background:var(--green);border-color:var(--green)}
 .sel-zona{padding:8px 12px;border:1px solid var(--border);border-radius:7px;background:var(--paper);font-family:'Outfit',sans-serif;font-size:.83rem;color:var(--ink2);outline:none;cursor:pointer}
-
+ 
 .table-wrap{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:14px}
 .section-row{display:flex;align-items:center;gap:8px;padding:9px 16px;background:var(--paper2);border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
 .section-row:hover{background:var(--paper3)}
@@ -97,25 +97,25 @@ table.crm tr:last-child td{border-bottom:none}
 table.crm tbody tr:hover td{background:var(--navy-light)}
 table.crm .comment-row td{background:var(--paper2);padding:6px 14px 10px 14px;border-bottom:1px solid var(--border)}
 table.crm .comment-row:hover td{background:var(--paper2)}
-
+ 
 .pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:.73rem;font-weight:600;white-space:nowrap}
 .pill-ok{background:var(--green-bg);color:var(--green)}
 .pill-warn{background:var(--amber-bg);color:var(--amber)}
 .pill-danger{background:var(--red-bg);color:var(--red)}
 .pill-none{background:var(--paper3);color:var(--ink3)}
 .pill-done{background:#DCFCE7;color:#166534}
-
+ 
 .status-sel{border:none;background:transparent;font-family:'Outfit',sans-serif;font-size:.73rem;font-weight:600;cursor:pointer;outline:none;padding:3px 8px;border-radius:20px}
 .status-sel.done{background:var(--green-bg);color:var(--green)}
 .status-sel.pending{background:#EFF6FF;color:#1D4ED8}
 .status-sel.progress{background:var(--amber-bg);color:var(--amber)}
-
+ 
 .row-actions{display:flex;gap:4px;opacity:0;transition:opacity .15s}
 tr:hover .row-actions{opacity:1}
 .act-btn{padding:4px 9px;border-radius:5px;border:1px solid var(--border);background:transparent;font-size:.73rem;color:var(--ink2);cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s}
 .act-btn:hover{background:var(--navy-bg);color:var(--navy-mid);border-color:var(--navy-mid)}
 .act-btn.del:hover{background:var(--red-bg);color:var(--red);border-color:#FCA5A5}
-
+ 
 /* inline comment */
 .comment-area{width:100%;border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--ink);background:var(--paper);resize:none;outline:none;min-height:52px;transition:border-color .15s}
 .comment-area:focus{border-color:var(--navy-mid);background:#fff}
@@ -123,7 +123,7 @@ tr:hover .row-actions{opacity:1}
 .comment-toggle{font-size:.72rem;color:var(--navy-mid);cursor:pointer;background:none;border:none;font-family:'Outfit',sans-serif;padding:2px 0;font-weight:500;white-space:nowrap}
 .comment-toggle:hover{text-decoration:underline}
 .existing-comment{font-size:.78rem;color:var(--ink2);font-style:italic;line-height:1.4;padding:4px 0}
-
+ 
 .form-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:28px;box-shadow:var(--shadow-sm);max-width:760px}
 .form-title{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:20px;color:var(--ink)}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -134,7 +134,7 @@ tr:hover .row-actions{opacity:1}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--navy-mid);background:#fff;box-shadow:0 0 0 3px rgba(43,80,128,.08)}
 .fg textarea{resize:vertical;min-height:80px}
 .form-actions{display:flex;gap:10px;margin-top:20px}
-
+ 
 .cost-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
 .cost-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm)}
 .cost-card.total-card{border-color:var(--navy-mid);background:var(--navy-bg)}
@@ -152,12 +152,12 @@ tr:hover .row-actions{opacity:1}
 .zone-val{width:90px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink2);font-weight:600}
 .cost-total-row{background:var(--navy-bg);font-weight:700;border-top:2px solid var(--navy-mid) !important}
 .cost-total-row td{color:var(--navy-mid) !important;font-size:.88rem}
-
+ 
 .file-btn{padding:4px 10px;border:1px dashed var(--border);border-radius:5px;background:transparent;font-size:.73rem;color:var(--navy-mid);cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;white-space:nowrap}
 .file-btn:hover{background:var(--navy-bg);border-style:solid}
 .file-link{color:var(--navy-mid);font-size:.78rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--navy-bg);border-radius:5px;border:1px solid #C7D9F0}
 .file-link:hover{background:#dbeafe}
-
+ 
 .budget-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
 .budget-card{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:20px;box-shadow:var(--shadow-sm);transition:all .2s;display:flex;flex-direction:column;gap:12px}
 .budget-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
@@ -177,7 +177,7 @@ tr:hover .row-actions{opacity:1}
 .budget-file-area .file-ico{font-size:1.4rem}
 .budget-file-area .file-txt{font-size:.8rem;color:var(--ink2)}
 .budget-file-area .file-txt small{display:block;color:var(--ink3);font-size:.72rem;margin-top:2px}
-
+ 
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px}
 .overlay.open{display:flex}
 .modal{background:var(--paper);border-radius:12px;width:100%;max-width:580px;box-shadow:var(--shadow-lg);overflow:hidden;animation:modalIn .2s ease;max-height:90vh;display:flex;flex-direction:column}
@@ -188,7 +188,7 @@ tr:hover .row-actions{opacity:1}
 .modal-x:hover{color:#fff}
 .modal-bd{padding:24px;overflow-y:auto}
 .modal-ft{padding:16px 24px;background:var(--paper2);border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0}
-
+ 
 .loading-screen{position:fixed;inset:0;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px;transition:opacity .5s}
 .loading-screen.hidden{opacity:0;pointer-events:none}
 .loading-logo{font-family:'Playfair Display',serif;font-size:2rem;color:#fff}
@@ -204,13 +204,13 @@ tr:hover .row-actions{opacity:1}
 </style>
 </head>
 <body>
-
+ 
 <div class="loading-screen" id="loading">
   <div class="loading-logo">Andorra Mantenimiento</div>
   <div class="spinner"></div>
   <div class="loading-sub" id="loading-msg">Conectando con Firebase...</div>
 </div>
-
+ 
 <aside class="sidebar">
   <div class="sidebar-logo">
     <h1>Andorra<br>Mantenimiento</h1>
@@ -237,7 +237,7 @@ tr:hover .row-actions{opacity:1}
     <button class="btn-settings" onclick="downloadHTML()" style="margin-top:6px">⬇ Descargar HTML</button>
   </div>
 </aside>
-
+ 
 <main class="main">
   <div class="topbar">
     <span class="page-title" id="page-title">Todas las tareas</span>
@@ -245,13 +245,13 @@ tr:hover .row-actions{opacity:1}
       <button class="btn-secondary" onclick="nav(document.querySelector('[data-page=nueva]'),'nueva')">+ Nueva tarea</button>
     </div>
   </div>
-
+ 
   <div class="alerts-banner" id="alerts-banner">
     <span class="alert-text" id="alert-text">⚠ Tareas urgentes:</span>
     <div id="alert-chips"></div>
     <button class="btn-send-alert" onclick="sendAlert()">📤 Enviar aviso</button>
   </div>
-
+ 
   <!-- TAREAS -->
   <div class="page active" id="page-tareas">
     <div class="kpi-row">
@@ -276,7 +276,7 @@ tr:hover .row-actions{opacity:1}
     </div>
     <div id="tasks-container"></div>
   </div>
-
+ 
   <!-- NUEVA TAREA -->
   <div class="page" id="page-nueva">
     <div class="form-card">
@@ -309,7 +309,7 @@ tr:hover .row-actions{opacity:1}
       </div>
     </div>
   </div>
-
+ 
   <!-- COSTES -->
   <div class="page" id="page-costes">
     <div class="cost-summary">
@@ -322,7 +322,7 @@ tr:hover .row-actions{opacity:1}
       <div class="cost-card"><div class="cost-card-label">Pendiente de pago</div><div class="cost-card-val gold" id="cc-pending">—</div><div class="cost-card-sub">Gasto previsto</div></div>
       <div class="cost-card"><div class="cost-card-label">Nº de entradas</div><div class="cost-card-val" id="cc-count">—</div><div class="cost-card-sub">Con importe registrado</div></div>
     </div>
-
+ 
     <div class="filter-bar">
       <div class="search-wrap"><span class="search-ico">🔍</span><input type="text" id="q-costes" placeholder="Buscar concepto, zona, empresa..." oninput="renderCostes()"></div>
       <select class="sel-zona" id="zona-filter-cost" onchange="renderCostes()">
@@ -333,7 +333,7 @@ tr:hover .row-actions{opacity:1}
         <option>Ático</option>
       </select>
     </div>
-
+ 
     <div class="table-wrap" style="margin-bottom:20px">
       <div class="section-hd-bar"><span>Coste por zona</span></div>
       <div id="cost-by-zone" style="padding:8px 0"></div>
@@ -352,7 +352,7 @@ tr:hover .row-actions{opacity:1}
       </table>
     </div>
   </div>
-
+ 
   <!-- PRESUPUESTOS -->
   <div class="page" id="page-presupuestos">
     <div class="kpi-row" style="grid-template-columns:repeat(3,1fr)">
@@ -370,7 +370,7 @@ tr:hover .row-actions{opacity:1}
     <div class="budget-grid" id="budget-grid"></div>
   </div>
 </main>
-
+ 
 <!-- MODAL EDIT TASK -->
 <div class="overlay" id="modal-edit">
   <div class="modal">
@@ -405,7 +405,7 @@ tr:hover .row-actions{opacity:1}
     </div>
   </div>
 </div>
-
+ 
 <!-- MODAL COST ENTRY -->
 <div class="overlay" id="modal-cost">
   <div class="modal">
@@ -435,7 +435,7 @@ tr:hover .row-actions{opacity:1}
     </div>
   </div>
 </div>
-
+ 
 <!-- MODAL BUDGET -->
 <div class="overlay" id="modal-budget">
   <div class="modal">
@@ -469,7 +469,7 @@ tr:hover .row-actions{opacity:1}
     </div>
   </div>
 </div>
-
+ 
 <!-- MODAL SETTINGS -->
 <div class="overlay" id="modal-settings">
   <div class="modal">
@@ -490,13 +490,13 @@ tr:hover .row-actions{opacity:1}
     </div>
   </div>
 </div>
-
+ 
 <div id="toast"></div>
-
+ 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
+ 
 const firebaseConfig = {
   apiKey: "AIzaSyDzQGoxA4nKWo1IW3AOjm_B25UX11hunOc",
   authDomain: "andorra-mantenimiento-bd58d.firebaseapp.com",
@@ -505,24 +505,24 @@ const firebaseConfig = {
   messagingSenderId: "1041483775292",
   appId: "1:1041483775292:web:ddfcbf90d447bb5372f239"
 };
-
+ 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
+ 
 let tasks=[], budgets=[], costEntries=[], settings={email:'',wa:''};
 let editId=null, editBudgetId=null, editCostId=null, taskFilter='all', budgetFilter='all';
 let openCommentRows = new Set();
-
+ 
 function setSyncStatus(state) {
   const dot=document.getElementById('sync-dot'), label=document.getElementById('sync-label');
   dot.className='sync-dot '+(state==='ok'?'':state==='loading'?'loading':'off');
   label.textContent=state==='ok'?'Sincronizado':state==='loading'?'Conectando...':'Sin conexión';
 }
-
+ 
 async function loadSettings() {
   try { const s=await getDoc(doc(db,'config','settings')); if(s.exists()) settings=s.data(); } catch(e){}
 }
-
+ 
 function startListeners() {
   onSnapshot(collection(db,'tasks'), snap=>{
     tasks=snap.docs.map(d=>({id:d.id,...d.data()}));
@@ -544,7 +544,7 @@ function startListeners() {
   });
   setSyncStatus('ok');
 }
-
+ 
 async function checkAndSeed() {
   document.getElementById('loading-msg').textContent='Cargando datos...';
   const snap=await getDoc(doc(db,'config','seeded'));
@@ -593,7 +593,7 @@ async function checkAndSeed() {
   await Promise.all(batch);
   await setDoc(doc(db,'config','seeded'),{done:true});
 }
-
+ 
 function getStatus(t){
   if(t.status==='done') return 'done';
   if(!t.proxima) return 'none';
@@ -615,14 +615,14 @@ function statusPill(t){
   return`<span class="pill pill-ok">✓ En ${d}d</span>`;
 }
 function fmtCost(v){if(!v||isNaN(parseFloat(v))) return'—';return parseFloat(v).toLocaleString('es-ES',{minimumFractionDigits:0})+' €';}
-
+ 
 function updateBadges(){
   const d=tasks.filter(t=>getStatus(t)==='danger'||getStatus(t)==='warn').length;
   const nb=document.getElementById('nb-danger'); nb.textContent=d; nb.style.display=d>0?'':'none';
   const p=budgets.filter(b=>b.status==='pending').length;
   const nb2=document.getElementById('nb-budget'); nb2.textContent=p; nb2.style.display=p>0?'':'none';
 }
-
+ 
 window.nav=function(btn,page){
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -633,14 +633,14 @@ window.nav=function(btn,page){
   if(page==='costes') renderCostes();
   if(page==='presupuestos') renderPresupuestos();
 };
-
+ 
 // ── TAREAS ────────────────────────────────────
 window.setTF=function(f){
   taskFilter=f;
   ['all','warn','danger','done'].forEach(x=>document.getElementById('cf-'+x).classList.toggle('on',x===f));
   renderTasks();
 };
-
+ 
 function renderTasks(){
   const q=(document.getElementById('q-tasks').value||'').toLowerCase();
   const zona=document.getElementById('zona-filter').value;
@@ -648,7 +648,7 @@ function renderTasks(){
   document.getElementById('k-done').textContent=tasks.filter(t=>t.status==='done').length;
   document.getElementById('k-warn').textContent=tasks.filter(t=>getStatus(t)==='warn').length;
   document.getElementById('k-danger').textContent=tasks.filter(t=>getStatus(t)==='danger').length;
-
+ 
   const urgent=tasks.filter(t=>getStatus(t)==='danger'||getStatus(t)==='warn');
   const banner=document.getElementById('alerts-banner');
   if(urgent.length>0){
@@ -656,7 +656,7 @@ function renderTasks(){
     document.getElementById('alert-text').textContent=`⚠ ${urgent.length} tarea${urgent.length!==1?'s':''} urgente${urgent.length!==1?'s':''}:`;
     document.getElementById('alert-chips').innerHTML=urgent.slice(0,4).map(t=>`<span class="alert-chip ${getStatus(t)==='danger'?'red':''}">${t.zona}: ${t.desc.slice(0,28)}${t.desc.length>28?'…':''}</span>`).join('')+(urgent.length>4?`<span style="font-size:.78rem;color:var(--amber);font-weight:600"> +${urgent.length-4} más</span>`:'');
   } else banner.classList.remove('show');
-
+ 
   let filtered=tasks.filter(t=>{
     if(zona&&t.zona!==zona) return false;
     if(q&&!t.desc.toLowerCase().includes(q)&&!t.zona.toLowerCase().includes(q)&&!(t.empresa||'').toLowerCase().includes(q)) return false;
@@ -665,15 +665,15 @@ function renderTasks(){
     if(taskFilter==='done') return t.status==='done';
     return true;
   });
-
+ 
   const order=['Zona Comunitaria','2º 1ª','2º 2ª','3º 1ª','3º 2ª','4º 1ª','4º 2ª','5º 1ª','5º 2ª','Ático'];
   const groups={};
   filtered.forEach(t=>{if(!groups[t.zona])groups[t.zona]=[];groups[t.zona].push(t);});
   const zonas=order.filter(z=>groups[z]);
-
+ 
   const cont=document.getElementById('tasks-container');
   if(!filtered.length){cont.innerHTML='<div class="empty"><div class="ico">📋</div><p>No hay tareas que coincidan con el filtro</p></div>';return;}
-
+ 
   cont.innerHTML=zonas.map(zona=>{
     const ts=groups[zona];
     const color=zona==='Zona Comunitaria'?'var(--navy-mid)':zona==='Ático'?'var(--gold)':'var(--green)';
@@ -731,7 +731,7 @@ function renderTasks(){
   }).join('');
 }
 window.renderTasks=renderTasks;
-
+ 
 window.toggleComment=function(id){
   if(openCommentRows.has(id)) openCommentRows.delete(id);
   else openCommentRows.add(id);
@@ -828,12 +828,12 @@ window.toggleBudgetFields=function(p){
   document.getElementById(p+'-ba-wrap').style.display=v?'':'none';
   document.getElementById(p+'-be-wrap').style.display=v?'':'none';
 };
-
+ 
 // ── COSTES ────────────────────────────────────
 function renderCostes(){
   const q=(document.getElementById('q-costes').value||'').toLowerCase();
   const zona=document.getElementById('zona-filter-cost').value;
-
+ 
   const allWithCost=[
     ...tasks.filter(t=>t.coste&&!isNaN(parseFloat(t.coste))).map(t=>({
       id:t.id,source:'task',desc:t.desc,zona:t.zona,empresa:t.empresa||'',
@@ -846,13 +846,13 @@ function renderCostes(){
       fileData:e.fileData||null,fileName:e.fileName||null,notes:e.notes||''
     }))
   ].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-
+ 
   const filtered=allWithCost.filter(x=>{
     if(zona&&x.zona!==zona) return false;
     if(q&&!x.desc.toLowerCase().includes(q)&&!x.zona.toLowerCase().includes(q)&&!(x.empresa||'').toLowerCase().includes(q)) return false;
     return true;
   });
-
+ 
   const total=filtered.reduce((s,x)=>s+x.amount,0);
   const done=filtered.filter(x=>x.status==='done').reduce((s,x)=>s+x.amount,0);
   const pend=filtered.filter(x=>x.status!=='done').reduce((s,x)=>s+x.amount,0);
@@ -860,7 +860,7 @@ function renderCostes(){
   document.getElementById('cc-done').textContent=done.toLocaleString('es-ES',{minimumFractionDigits:0})+' €';
   document.getElementById('cc-pending').textContent=pend.toLocaleString('es-ES',{minimumFractionDigits:0})+' €';
   document.getElementById('cc-count').textContent=filtered.length;
-
+ 
   const order=['Zona Comunitaria','2º 1ª','2º 2ª','3º 1ª','3º 2ª','4º 1ª','4º 2ª','5º 1ª','5º 2ª','Ático'];
   const byZone={};
   filtered.forEach(x=>{byZone[x.zona]=(byZone[x.zona]||0)+x.amount;});
@@ -871,7 +871,7 @@ function renderCostes(){
       <div class="zone-bar-wrap"><div class="zone-bar" style="width:${(byZone[z]/maxZ*100).toFixed(1)}%"></div></div>
       <div class="zone-val">${byZone[z].toLocaleString('es-ES',{minimumFractionDigits:0})} €</div>
     </div>`).join('');
-
+ 
   const rows=filtered.map(x=>{
     const fileCell=x.fileData
       ?`<a class="file-link" href="${x.fileData}" target="_blank" download="${x.fileName||'archivo'}">📎 ${(x.fileName||'archivo').slice(0,18)}${(x.fileName||'').length>18?'…':''}</a>`
@@ -896,17 +896,17 @@ function renderCostes(){
       <td><div class="row-actions">${actions}</div></td>
     </tr>`;
   }).join('');
-
+ 
   const totalRow=`<tr class="cost-total-row">
     <td colspan="4" style="text-align:right;padding-right:8px">TOTAL</td>
     <td>${total.toLocaleString('es-ES',{minimumFractionDigits:0})} €</td>
     <td colspan="3"></td>
   </tr>`;
-
+ 
   document.getElementById('cost-tbody').innerHTML=(filtered.length?rows+totalRow:'<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--ink3)">No hay entradas de coste</td></tr>');
 }
 window.renderCostes=renderCostes;
-
+ 
 window.openAddCostEntry=function(){
   editCostId=null;
   document.getElementById('cost-modal-title').textContent='Nueva entrada de coste';
@@ -972,26 +972,26 @@ window.delCostEntry=async function(id){
   await deleteDoc(doc(db,'costEntries',id)); toast('Entrada eliminada');
 };
 function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej();r.readAsDataURL(file);});}
-
+ 
 // ── PRESUPUESTOS ─────────────────────────────
 window.setBF=function(f){
   budgetFilter=f;
   ['all','pending','accepted','rejected'].forEach(x=>document.getElementById('bf-'+x).classList.toggle('on',x===f));
   renderPresupuestos();
 };
-
+ 
 function renderPresupuestos(){
   const q=(document.getElementById('q-presupuestos').value||'').toLowerCase();
   document.getElementById('bp-total').textContent=budgets.length;
   document.getElementById('bp-accepted').textContent=budgets.filter(b=>b.status==='accepted').length;
   document.getElementById('bp-pending').textContent=budgets.filter(b=>b.status==='pending').length;
-
+ 
   let filtered=budgets.filter(b=>{
     if(budgetFilter!=='all'&&b.status!==budgetFilter) return false;
     if(q&&!b.desc.toLowerCase().includes(q)&&!b.zona.toLowerCase().includes(q)&&!(b.empresa||'').toLowerCase().includes(q)) return false;
     return true;
   });
-
+ 
   document.getElementById('budget-grid').innerHTML=filtered.map(b=>{
     const sClass={pending:'bs-pending',accepted:'bs-accepted',rejected:'bs-rejected'}[b.status]||'bs-pending';
     const sLabel={pending:'Pendiente',accepted:'Aceptado',rejected:'Rechazado'}[b.status]||'Pendiente';
@@ -1021,7 +1021,7 @@ function renderPresupuestos(){
   }).join('')+`<button class="add-budget-btn" onclick="openNewBudget()">➕ Añadir presupuesto</button>`;
 }
 window.renderPresupuestos=renderPresupuestos;
-
+ 
 window.onBudgetFileChange=function(){
   const f=document.getElementById('bm-file').files[0];
   document.getElementById('bm-file-name').textContent=f?f.name:'Haz clic para seleccionar archivo';
@@ -1042,6 +1042,8 @@ window.setBudgetStatus=async function(id,status){
   await updateDoc(doc(db,'budgets',id),{status});
   toast({accepted:'Presupuesto aceptado ✓',rejected:'Presupuesto rechazado'}[status]);
 };
+window.delBudget=async function(id){
+  if(!confirm('¿Eliminar este presupuesto?')) return;
   await deleteDoc(doc(db,'budgets',id)); toast('Presupuesto eliminado');
 };
 window.openNewBudget=function(){
@@ -1090,7 +1092,7 @@ window.saveBudget=async function(){
   btn.textContent='Guardar presupuesto'; btn.disabled=false;
   closeModal('modal-budget'); toast(editBudgetId?'Presupuesto actualizado ✓':'Presupuesto añadido ✓');
 };
-
+ 
 window.openSettings=function(){
   document.getElementById('cfg-email').value=settings.email||'';
   document.getElementById('cfg-wa').value=settings.wa||'';
@@ -1112,7 +1114,7 @@ window.sendAlert=function(){
   else toast('⚙ Configura un número de WhatsApp primero','warn');
   if(settings.email) window.open(`mailto:${settings.email}?subject=${encodeURIComponent('⚠ Andorra Mantenimiento – Tareas urgentes')}&body=${encodeURIComponent(msg)}`,'_blank');
 };
-
+ 
 window.closeModal=function(id){document.getElementById(id).classList.remove('open');};
 window.toast=function(msg,type='ok'){
   const el=document.getElementById('toast');
@@ -1120,7 +1122,7 @@ window.toast=function(msg,type='ok'){
   el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2800);
 };
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
-
+ 
 window.downloadHTML=function(){
   const src = document.documentElement.outerHTML;
   const blob = new Blob([src], {type:'text/html'});
@@ -1130,7 +1132,7 @@ window.downloadHTML=function(){
   a.click();
   URL.revokeObjectURL(a.href);
 };
-
+ 
 async function boot(){
   try{
     await loadSettings();
